@@ -10,6 +10,12 @@ class GameScene extends Phaser.Scene {
         this.load.image('card3', 'assets/sprites/card3.png');
         this.load.image('card4', 'assets/sprites/card4.png');
         this.load.image('card5', 'assets/sprites/card5.png');
+
+        this.load.audio('theme', 'assets/sounds/theme.mp3');
+        this.load.audio('complete', 'assets/sounds/complete.mp3');
+        this.load.audio('success', 'assets/sounds/success.mp3');
+        this.load.audio('card', 'assets/sounds/card.mp3');
+        this.load.audio('timeout', 'assets/sounds/timeout.mp3');
     }
     createText() {
         this.timeoutText = this.add.text(10, 330, "", {
@@ -21,6 +27,7 @@ class GameScene extends Phaser.Scene {
         this.timeoutText.setText("Time: " + this.timeout);
 
         if(this.timeout <= 0) {
+            this.sounds.timeout.play();
             this.start()
         } else {
            --this.timeout; 
@@ -35,8 +42,18 @@ class GameScene extends Phaser.Scene {
             loop: true
         });
     }
+    createSounds() {
+        this.sounds = {
+            card: this.sound.add('card'),
+            success: this.sound.add('success'),
+            theme: this.sound.add('theme'),
+            complete: this.sound.add('complete'),
+            timeout: this.sound.add('timeout'),
+        };
+    }
     create() {
         this.timeout = config.timeout;
+        this.createSounds();
         this.createTimer();
         this.createBackground();
         this.createText();
@@ -48,6 +65,10 @@ class GameScene extends Phaser.Scene {
         this.openedCard = null;
         this.openedCardsCount = 0;
         this.initCards();
+
+        this.sounds.theme.play({
+            volume: 0.1
+        });
     }
     initCards() {
         let positions = this.getCardsPositions();
@@ -76,12 +97,20 @@ class GameScene extends Phaser.Scene {
             return false;
         }
 
+        this.sounds.card.play({
+            volume: 0.4
+        });
+
         if (this.openedCard) {
             // уже есть открытая карта
             if (this.openedCard.value === card.value) {
                 // картинки равны - запомнить
                 this.openedCard = null;
                 ++this.openedCardsCount;
+
+                this.sounds.success.play({
+                    volume: 0.6
+                });
             } else {
                 // картинки разные - скрыть прошлую
                 this.openedCard.close();
@@ -95,6 +124,9 @@ class GameScene extends Phaser.Scene {
         card.open();
 
         if (this.openedCardsCount === this.cards.length / 2) {
+            this.sounds.complete.play({
+                volume: 0.6
+            });
             this.start();
         }
     }
