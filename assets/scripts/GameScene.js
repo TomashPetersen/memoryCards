@@ -18,8 +18,8 @@ class GameScene extends Phaser.Scene {
         this.load.audio('timeout', 'assets/sounds/timeout.mp3');
     }
     createText() {
-        this.timeoutText = this.add.text(10, 330, "", {
-            font: '32px ComicHelvetic',
+        this.timeoutText = this.add.text(10, 330, "Timer: ", {
+            font: '28px ComicHelvetic',
             fill: '#ffffff'
         });
     }
@@ -27,20 +27,22 @@ class GameScene extends Phaser.Scene {
         this.timeoutText.setText("Time: " + this.timeout);
 
         if(this.timeout <= 0) {
+            this.timer.paused = true;
             this.sounds.timeout.play();
-            this.start()
+            this.restart()
         } else {
            --this.timeout; 
         }
         
     }
     createTimer() {
-        this.time.addEvent({
+        this.timer = this.time.addEvent({
             delay: 1000,
             callback: this.onTimerTick,
             callbackScope: this,
             loop: true
         });
+        
     }
     createSounds() {
         this.sounds = {
@@ -59,24 +61,63 @@ class GameScene extends Phaser.Scene {
         this.createText();
         this.createCards();
         this.start();
+        this.timer.paused = true;
+    }
+    restart() {
+        let count = 0;
+        let onCardMoveComplete = () => {
+            ++count;
+            if (count >= this.cards.length) {
+                this.start();
+                this.timer.paused = true;
+            }
+        };
+        this.cards.forEach(card => {
+            card.depth = 1 / card.position.delay;
+            card.move({
+                x: this.sys.game.config.width + card.width,
+                y: this.sys.game.config.height + card.height,
+                delay: card.position.delay,
+                callback: onCardMoveComplete
+            })
+        })
     }
     start() {
+        this.initCardsPositions();
         this.timeout = config.timeout;
         this.openedCard = null;
         this.openedCardsCount = 0;
+        
         this.initCards();
+        this.showCards();
 
         this.sounds.theme.play({
             volume: 0.1
         });
     }
     initCards() {
-        let positions = this.getCardsPositions();
+        let positions = Phaser.Utils.Array.Shuffle(this.positions);
         this.cards.forEach(card => {
-            let position = positions.pop();
-            card.close();
-            card.setPosition(position.x, position.y);
+            card.init(positions.pop());
         });
+    }
+    showCards() {
+        let count = 0;
+        let onCardMoveComplete = () => {
+            ++count;
+            if (count >= this.cards.length) {
+                this.timer.paused = false;
+            }
+        };
+        this.cards.forEach(card => {
+            card.depth = card.position.delay;
+            card.move({
+                x: card.position.x,
+                y: card.position.y,
+                delay: card.position.delay,
+                callback: onCardMoveComplete
+            })
+        })
     }
     createBackground() {
         this.add.sprite(0, 0, 'bg').setOrigin(0, 0);
@@ -121,32 +162,35 @@ class GameScene extends Phaser.Scene {
             this.openedCard = card;
         }
 
-        card.open();
-
-        if (this.openedCardsCount === this.cards.length / 2) {
+        card.open(() => {
+            if (this.openedCardsCount === this.cards.length / 2) {
             this.sounds.complete.play({
                 volume: 0.6
             });
-            this.start();
-        }
+            this.restart();
+        }});
     }
-    getCardsPositions() {
+    initCardsPositions() {
         let positions = [];
         let cardTexture = this.textures.get('card').getSourceImage();
         let cardWidth = cardTexture.width + 4;
         let cardHeight = cardTexture.height + 4;
         let offsetX = (this.sys.game.config.width - cardWidth * config.cols) / 2 + cardWidth / 2;
         let offsetY = (this.sys.game.config.height - cardHeight * config.rows) / 2 + cardHeight / 2;
+
+        let id = 0;
     
         for (let row = 0; row < config.rows; row++) {
             for (let col = 0; col < config.cols; col++) {
+                ++id;
                 positions.push({
+                    delay: id * 200,
                     x: offsetX + col * cardWidth,
                     y: offsetY + row * cardHeight,
                 });
             }
         }
 
-        return Phaser.Utils.Array.Shuffle(positions);
+        this.positions = positions;
     }
 }
