@@ -5,7 +5,8 @@ let config = {
     rows: 2,
     cols: 5,
     cards: [1, 2, 3, 4, 5],
-    scene: new GameScene()
+    timeout: 60,
+    scene: [BootScene, PreloadScene, StartScene, GameScene]
 };
 
 let game = new Phaser.Game(config);

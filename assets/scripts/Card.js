@@ -3,41 +3,71 @@ class Card extends Phaser.GameObjects.Sprite {
         super(scene, 0, 0, 'card');
         this.scene = scene;
         this.value = value;
-        // this.setOrigin(0.5, 0.5);
         this.scene.add.existing(this);
         this.opened = false;
         this.setInteractive();
     }
 
-    flip(texture) {
+    init(position) {
+            this.position = position;
+            this.close();
+            this.setPosition(-this.width, -this.height);
+    }
+
+    move(prop) {
         this.scene.tweens.add ({
             targets: this,
-            scaleX: 0,
+            x: prop.x,
+            y: prop.y,
+            delay: prop.delay,
             ease: 'Linear',
             duration: 150,
             onComplete: () => {
-                this.appear(texture);
+                if (prop.callback) {
+                    prop.callback();
+                }
             }
         });
     }
 
-    appear(texture) {
+    flip(callback) {
+        this.scene.tweens.add ({
+            targets: this,
+            scaleX: 0,
+            ease: 'Linear',
+            duration: 250,
+            onComplete: () => {
+                this.appear(callback);
+            }
+        });
+    }
+
+    appear(callback) {
+        let texture = this.opened ? 'card' + this.value : 'card';
         this.setTexture(texture);
         this.scene.tweens.add ({
             targets: this,
             scaleX: 1,
             ease: 'Linear',
-            duration: 150,
+            duration: 250,
+            onComplete: () => {
+                this.scene.cardsIsTouchable = true;
+                if (callback) {
+                    callback();
+                };
+            }
         })
     }
 
-    open() {
+    open(callback) {
         this.opened = true;
-        this.flip("card" + this.value);
+        this.flip(callback);
     }
 
     close() {
-        this.opened = false;
-        this.flip("card");
+        if (this.opened) {
+            this.opened = false;
+            this.flip();
+        }
     }
 }
