@@ -3,7 +3,6 @@ class Card extends Phaser.GameObjects.Sprite {
         super(scene, 0, 0, 'card');
         this.scene = scene;
         this.value = value;
-        // this.setOrigin(0.5, 0.5);
         this.scene.add.existing(this);
         this.opened = false;
         this.setInteractive();
@@ -36,7 +35,7 @@ class Card extends Phaser.GameObjects.Sprite {
             targets: this,
             scaleX: 0,
             ease: 'Linear',
-            duration: 150,
+            duration: 250,
             onComplete: () => {
                 this.appear(callback);
             }
@@ -50,8 +49,9 @@ class Card extends Phaser.GameObjects.Sprite {
             targets: this,
             scaleX: 1,
             ease: 'Linear',
-            duration: 150,
+            duration: 250,
             onComplete: () => {
+                this.scene.cardsIsTouchable = true;
                 if (callback) {
                     callback();
                 };

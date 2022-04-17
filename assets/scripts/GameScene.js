@@ -2,24 +2,10 @@ class GameScene extends Phaser.Scene {
     constructor() {
         super("Game");
     }
-    preload() {
-        this.load.image('bg', 'assets/sprites/background.png');
-        this.load.image('card', 'assets/sprites/card.png');
-        this.load.image('card1', 'assets/sprites/card1.png');
-        this.load.image('card2', 'assets/sprites/card2.png');
-        this.load.image('card3', 'assets/sprites/card3.png');
-        this.load.image('card4', 'assets/sprites/card4.png');
-        this.load.image('card5', 'assets/sprites/card5.png');
 
-        this.load.audio('theme', 'assets/sounds/theme.mp3');
-        this.load.audio('complete', 'assets/sounds/complete.mp3');
-        this.load.audio('success', 'assets/sounds/success.mp3');
-        this.load.audio('card', 'assets/sounds/card.mp3');
-        this.load.audio('timeout', 'assets/sounds/timeout.mp3');
-    }
     createText() {
-        this.timeoutText = this.add.text(10, 330, "Timer: ", {
-            font: '28px ComicHelvetic',
+        this.timeoutText = this.add.text(10, 330, "Time: 60", {
+            font: `28px ComicHelvetic`,
             fill: '#ffffff'
         });
     }
@@ -54,16 +40,22 @@ class GameScene extends Phaser.Scene {
         };
     }
     create() {
+        this.isStarted = false;
         this.timeout = config.timeout;
+        this.cardsIsTouchable = true;
         this.createSounds();
         this.createTimer();
         this.createBackground();
-        this.createText();
+        this.createText(10, 330, "Time: ", "28px");
         this.createCards();
         this.start();
         this.timer.paused = true;
     }
     restart() {
+        if (!this.isStarted) {
+            return;
+        }
+        this.isStarted = false;
         let count = 0;
         let onCardMoveComplete = () => {
             ++count;
@@ -92,8 +84,10 @@ class GameScene extends Phaser.Scene {
         this.showCards();
 
         this.sounds.theme.play({
-            volume: 0.1
+            volume: 0.1,
+            loop: true
         });
+        this.isStarted = true;
     }
     initCards() {
         let positions = Phaser.Utils.Array.Shuffle(this.positions);
@@ -134,13 +128,15 @@ class GameScene extends Phaser.Scene {
         this.input.on("gameobjectdown", this.onCardClicked, this);
     }
     onCardClicked(pointer, card) {
-        if (card.opened) {
+        if (card.opened || !this.cardsIsTouchable) {
             return false;
         }
 
         this.sounds.card.play({
             volume: 0.4
         });
+
+        this.cardsIsTouchable = false;
 
         if (this.openedCard) {
             // уже есть открытая карта
