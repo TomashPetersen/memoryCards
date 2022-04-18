@@ -28,7 +28,6 @@ class LoadingBar {
     }
 
     showProgressBar(value) {
-        console.log(value);
         this.progressBar
             .clear()
             .fillStyle(this.style.barColor)
