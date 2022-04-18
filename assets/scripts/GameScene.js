@@ -3,21 +3,29 @@ class GameScene extends Phaser.Scene {
         super("Game");
     }
 
-    createText(x, y, text, font) {
-        this.timeoutText = this.add.text(x, y, text, {
-            font: font,
+    createMainText(text) {
+        this.mainText = this.add.text(this.sys.game.config.width / 2, 40, `Level ${config.levelCount}`, {
+            font: `40px ComicHelvetic`,
+            fill: '#ffffff'
+        }).setOrigin(0.5);
+    }
+    createTimerText() {
+        this.timeoutText = this.add.text(10, 330, `Time: ${this.timeout}`, {
+            font: `28px ComicHelvetic`,
             fill: '#ffffff'
         });
     }
-    setText() {
+    setTimerText() {
         this.timeoutText.setText("Time: " + this.timeout);
     }
     onTimerTick() {
-        this.setText();
+        this.setTimerText();
 
         if(this.timeout <= 0) {
             
             this.sounds.timeout.play();
+            this.mainText.setText(`You are lose..`);
+            config.levelCount = 1;
             this.restart()
         } else {
            --this.timeout; 
@@ -49,7 +57,8 @@ class GameScene extends Phaser.Scene {
         this.createSounds();
         this.createTimer();
         this.createBackground();
-        this.createText(10, 330, `Time: ${this.timeout}`, `28px ComicHelvetic`);
+        this.createMainText();
+        this.createTimerText();
         this.createCards();
         this.start();
         this.timer.paused = true;
@@ -61,11 +70,13 @@ class GameScene extends Phaser.Scene {
         this.timeout = config.levels[config.levelCount].timeout;
         this.timer.paused = true;
         this.isStarted = false;
+        this.timeoutText.setText(`Time: ${this.timeout}`);
         let count = 0;
         let onCardMoveComplete = () => {
             ++count;
             if (count >= config.levels[config.levelCount].cards.length * 2) {
                 this.timer.paused = true;
+                this.mainText.setText(`Level ${config.levelCount}`);
                 this.start();
             }
         };
@@ -169,8 +180,15 @@ class GameScene extends Phaser.Scene {
                 volume: 0.6
             });
 
-            console.log(++config.levelCount);
-            this.restart();
+            if (config.levelCount < config.numberOfLevel) {
+                this.mainText.setText(`Level ${config.levelCount} passed!`);
+                ++config.levelCount;
+                this.restart();
+            } else {
+                this.mainText.setText(`You are win!`);
+                config.levelCount = 1;
+                this.restart();
+            }
         }});
     }
     initCardsPositions() {
