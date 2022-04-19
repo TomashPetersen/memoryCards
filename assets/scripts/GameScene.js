@@ -3,15 +3,15 @@ class GameScene extends Phaser.Scene {
         super("Game");
     }
 
-    createMainText(text) {
-        this.mainText = this.add.text(this.sys.game.config.width / 2, 40, `Level ${config.levelCount}`, {
-            font: `40px ComicHelvetic`,
+    createMainText() {
+        this.mainText = this.add.text(this.sys.game.config.width / 2, 35, `LEVEL ${this.currentLevel}`, {
+            font: `42px PirateOfTheSeaside`,
             fill: '#ffffff'
         }).setOrigin(0.5);
     }
     createTimerText() {
-        this.timeoutText = this.add.text(10, 330, `Time: ${this.timeout}`, {
-            font: `28px ComicHelvetic`,
+        this.timeoutText = this.add.text(40, 330, `Time: ${this.timeout}`, {
+            font: `34px PirateOfTheSeaside`,
             fill: '#ffffff'
         });
     }
@@ -22,10 +22,10 @@ class GameScene extends Phaser.Scene {
         this.setTimerText();
 
         if(this.timeout <= 0) {
-            
+            this.cardsIsTouchable = false;
             this.sounds.timeout.play();
-            this.mainText.setText(`You are lose..`);
-            config.levelCount = 1;
+            this.mainText.setText(`YOU ARE LOSE..`);
+            this.currentLevel = 1;
             this.restart()
         } else {
            --this.timeout; 
@@ -33,7 +33,7 @@ class GameScene extends Phaser.Scene {
         
     }
     createTimer() {
-        this.timeout = config.levels[config.levelCount].timeout;
+        this.timeout = this.level[this.currentLevel].timeout;
         this.timer = this.time.addEvent({
             delay: 1000,
             callback: this.onTimerTick,
@@ -54,12 +54,14 @@ class GameScene extends Phaser.Scene {
     create() {
         this.isStarted = false;
         this.cardsIsTouchable = false;
+        this.currentLevel = 1;
+        this.numberOfLevels = Object.keys(config.levels).length;
+        this.level = config.levels;
         this.createSounds();
         this.createTimer();
         this.createBackground();
         this.createMainText();
         this.createTimerText();
-        this.createCards();
         this.start();
         this.timer.paused = true;
     }
@@ -67,17 +69,17 @@ class GameScene extends Phaser.Scene {
         if (!this.isStarted) {
             return;
         }
-        this.timeout = config.levels[config.levelCount].timeout;
+        this.timeout = this.level[this.currentLevel].timeout;
         this.timer.paused = true;
         this.isStarted = false;
         this.timeoutText.setText(`Time: ${this.timeout}`);
         let count = 0;
         let onCardMoveComplete = () => {
             ++count;
-            if (count >= config.levels[config.levelCount].cards.length * 2) {
+            if (count >= this.cards.length) {
                 this.timer.paused = true;
-                this.mainText.setText(`Level ${config.levelCount}`);
-                this.start();
+                this.mainText.setText(`LEVEL ${this.currentLevel}`);
+                this.start();    
             }
         };
         this.cards.forEach(card => {
@@ -94,7 +96,7 @@ class GameScene extends Phaser.Scene {
         this.initCardsPositions();
         this.openedCard = null;
         this.openedCardsCount = 0;
-        
+        this.createCards();
         this.initCards();
         this.showCards();
 
@@ -114,7 +116,7 @@ class GameScene extends Phaser.Scene {
         let count = 0;
         let onCardMoveComplete = () => {
             ++count;
-            if (count >= config.levels[config.levelCount].cards.length * 2) {
+            if (count >= this.level[this.currentLevel].cards.length * 2) {
                 this.timer.paused = false;
                 this.isStarted = true;
                 this.cardsIsTouchable = true;
@@ -137,7 +139,7 @@ class GameScene extends Phaser.Scene {
     createCards() {
         this.cards = [];
 
-        for (let value of config.levels[config.levelCount].cards) {
+        for (let value of this.level[this.currentLevel].cards) {
             for (let i = 0; i < 2; i++) {
                 this.cards.push(new Card(this, value));
             }
@@ -180,13 +182,13 @@ class GameScene extends Phaser.Scene {
                 volume: 0.6
             });
 
-            if (config.levelCount < config.numberOfLevel) {
-                this.mainText.setText(`Level ${config.levelCount} passed!`);
-                ++config.levelCount;
-                this.restart();
+            if (this.currentLevel < this.numberOfLevels) {
+                this.mainText.setText(`LEVEL ${this.currentLevel} PASSED!`);
+                ++this.currentLevel;
+                this.restart();  
             } else {
-                this.mainText.setText(`You are win!`);
-                config.levelCount = 1;
+                this.mainText.setText(`YOU ARE WIN!`);
+                this.currentLevel = 1;
                 this.restart();
             }
         }});
@@ -196,13 +198,13 @@ class GameScene extends Phaser.Scene {
         let cardTexture = this.textures.get('card').getSourceImage();
         let cardWidth = cardTexture.width + 4;
         let cardHeight = cardTexture.height + 4;
-        let offsetX = (this.sys.game.config.width - cardWidth * config.levels[config.levelCount].cols) / 2 + cardWidth / 2;
-        let offsetY = (this.sys.game.config.height - cardHeight * config.levels[config.levelCount].rows) / 2 + cardHeight / 2;
+        let offsetX = (this.sys.game.config.width - cardWidth * this.level[this.currentLevel].cols) / 2 + cardWidth / 2;
+        let offsetY = (this.sys.game.config.height - cardHeight * this.level[this.currentLevel].rows) / 2 + cardHeight / 2 + 20;
 
         let id = 0;
     
-        for (let row = 0; row < config.levels[config.levelCount].rows; row++) {
-            for (let col = 0; col < config.levels[config.levelCount].cols; col++) {
+        for (let row = 0; row < this.level[this.currentLevel].rows; row++) {
+            for (let col = 0; col < this.level[this.currentLevel].cols; col++) {
                 ++id;
                 positions.push({
                     delay: id * 200,
@@ -211,7 +213,7 @@ class GameScene extends Phaser.Scene {
                 });
             }
         }
-
+    
         this.positions = positions;
     }
 }

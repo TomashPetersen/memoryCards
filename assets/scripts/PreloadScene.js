@@ -16,6 +16,11 @@ class PreloadScene extends Phaser.Scene {
         this.load.image('card3', 'assets/sprites/card3.png');
         this.load.image('card4', 'assets/sprites/card4.png');
         this.load.image('card5', 'assets/sprites/card5.png');
+        this.load.image('card6', 'assets/sprites/card6.png');
+        this.load.image('card7', 'assets/sprites/card7.png');
+        this.load.image('card8', 'assets/sprites/card8.png');
+        this.load.image('card9', 'assets/sprites/card9.png');
+        this.load.image('card10', 'assets/sprites/card10.png');
 
         this.load.audio('theme', 'assets/sounds/theme.mp3');
         this.load.audio('complete', 'assets/sounds/complete.mp3');
