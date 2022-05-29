@@ -4,7 +4,7 @@ class GameScene extends Phaser.Scene {
     }
 
     createMainText() {
-        this.mainText = this.add.text(this.sys.game.config.width / 2, 35, `LEVEL ${this.currentLevel}`, {
+        this.mainText = this.add.text(this.sys.game.config.width / 2, 25, `LEVEL ${this.currentLevel}`, {
             font: `42px PirateOfTheSeaside`,
             fill: '#ffffff'
         }).setOrigin(0.5);
