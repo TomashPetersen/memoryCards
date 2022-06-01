@@ -10,7 +10,7 @@ class StartScene extends Phaser.Scene {
     }
 
     createText() {
-        this.timeoutText = this.add.text(config.width / 2, 200, "Tap on screen to start", {
+        this.timeoutText = this.add.text(config.width / 2, 200, "Click on screen to start", {
             font: `60px PirateOfTheSeaside`,
             fill: '#ffffff'
         }).setOrigin(0.5);

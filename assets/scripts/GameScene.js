@@ -60,6 +60,7 @@ class GameScene extends Phaser.Scene {
         this.createSounds();
         this.createTimer();
         this.createBackground();
+        this.createSoundButton();
         this.createMainText();
         this.createTimerText();
         this.start();
@@ -147,7 +148,12 @@ class GameScene extends Phaser.Scene {
 
         this.input.on("gameobjectdown", this.onCardClicked, this);
     }
+    createSoundButton() {
+       let button = new SoundButton(this);
+    }
+    
     onCardClicked(pointer, card) {
+        if (card instanceof SoundButton) return;
         if (card.opened || !this.cardsIsTouchable) {
             return false;
         }
