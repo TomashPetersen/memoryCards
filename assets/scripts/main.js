@@ -19,7 +19,7 @@ let config = {
             rows: 2,
             cols: 5,
             cards: [1, 2, 3, 4, 5],
-            timeout: 25,
+            timeout: 30,
         },
         "4": {
             rows: 4,
@@ -32,7 +32,7 @@ let config = {
             rows: 4,
             cols: 5,
             cards: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            timeout: 40,
+            timeout: 30,
             addCards: true
         }
     },

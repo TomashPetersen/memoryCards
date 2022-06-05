@@ -15,6 +15,13 @@ class GameScene extends Phaser.Scene {
             fill: '#ffffff'
         });
     }
+    createScoreText() {
+        this.score = 0;
+        this.scoreText = this.add.text(1060, 330, `Score: ${this.score}`, {
+            font: `34px PirateOfTheSeaside`,
+            fill: '#ffffff'
+        });
+    }
     setTimerText() {
         this.timeoutText.setText("Time: " + this.timeout);
     }
@@ -26,11 +33,24 @@ class GameScene extends Phaser.Scene {
             this.sounds.timeout.play();
             this.mainText.setText(`YOU ARE LOSE..`);
             this.currentLevel = 1;
+            this.score = 0;
+            this.setScore();
             this.restart()
         } else {
            --this.timeout; 
-        }
-        
+        }  
+    }
+    openCardScoreCounter() {
+        this.score += 15;
+        this.setScore();
+    }
+    levelPassScoreCounter() {
+        let timeLeft = this.timeout;
+        this.score = this.score + timeLeft;
+        this.setScore();
+    }
+    setScore() {
+        this.scoreText.setText(`Score: ${this.score}`);
     }
     createTimer() {
         this.timeout = this.level[this.currentLevel].timeout;
@@ -63,6 +83,7 @@ class GameScene extends Phaser.Scene {
         this.createSoundButton();
         this.createMainText();
         this.createTimerText();
+        this.createScoreText()
         this.start();
         this.timer.paused = true;
     }
@@ -172,6 +193,9 @@ class GameScene extends Phaser.Scene {
                 this.sounds.success.play({
                     volume: 0.6
                 });
+
+                this.openCardScoreCounter()
+
             } else {
                 // картинки разные - скрыть прошлую
                 this.openedCard.close();
@@ -184,19 +208,23 @@ class GameScene extends Phaser.Scene {
 
         card.open(() => {
             if (this.openedCardsCount >= this.cards.length / 2) {
-            this.sounds.complete.play({
-                volume: 0.6
-            });
+                this.sounds.complete.play ({
+                    volume: 0.6
+                });
 
-            if (this.currentLevel < this.numberOfLevels) {
-                this.mainText.setText(`LEVEL ${this.currentLevel} PASSED!`);
-                ++this.currentLevel;
-                this.restart();  
-            } else {
-                this.mainText.setText(`YOU ARE WIN!`);
-                this.currentLevel = 1;
-                this.restart();
-            }
+                if (this.currentLevel < this.numberOfLevels) {
+                    this.mainText.setText(`LEVEL ${this.currentLevel} PASSED!`);
+                    ++this.currentLevel;
+                    this.levelPassScoreCounter();
+                    this.restart();  
+                } else {
+                    this.mainText.setText(`YOU ARE WIN!`);
+                    this.levelPassScoreCounter();
+                    this.currentLevel = 1;
+                    this.score = 0;
+                    this.setScore();
+                    this.restart();
+                }
         }});
     }
     initCardsPositions() {
