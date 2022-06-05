@@ -3,7 +3,7 @@ class LoadingBar {
         this.scene = scene;
         this.style = {
             boxColor: 0xD3D3D3,
-            barColor: 0xFFF9DC,
+            barColor: 0xc70000,
             x: config.width / 2 - 450,
             y: config.height / 2 + 250,
             width: 900,
