@@ -12,12 +12,14 @@ class StartScene extends Phaser.Scene {
     createText() {
         this.timeoutText = this.add.text(config.width / 2, 200, "Click on screen to start", {
             font: `60px PirateOfTheSeaside`,
-            fill: '#ffffff'
+            fill: '#3d3801'
         }).setOrigin(0.5);
     }
 
     createBackground() {
-        this.add.sprite(0, 0, 'bg').setOrigin(0, 0);
+        this.add.sprite(0, 0, 'bg')
+        .setOrigin(0, 0)
+        .setInteractive({ cursor: 'pointer' });
     }
 
     setEvents() {

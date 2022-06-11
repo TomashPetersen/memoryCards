@@ -4,7 +4,7 @@ class BootScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('bg', 'assets/sprites/background.png');
+        this.load.image('bg', 'assets/sprites/background.jpg');
     }
 
     create() {

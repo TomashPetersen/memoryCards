@@ -4,20 +4,20 @@ class GameScene extends Phaser.Scene {
     }
 
     createMainText() {
-        this.mainText = this.add.text(this.sys.game.config.width / 2, 25, `LEVEL ${this.currentLevel}`, {
+        this.mainText = this.add.text(1400, 500, `LEVEL ${this.currentLevel}`, {
             font: `42px PirateOfTheSeaside`,
             fill: '#ffffff'
         }).setOrigin(0.5);
     }
     createTimerText() {
-        this.timeoutText = this.add.text(40, 330, `Time: ${this.timeout}`, {
+        this.timeoutText = this.add.text(150, 590, `Time: ${this.timeout}`, {
             font: `34px PirateOfTheSeaside`,
             fill: '#ffffff'
         });
     }
     createScoreText() {
         this.score = 0;
-        this.scoreText = this.add.text(1060, 330, `Score: ${this.score}`, {
+        this.scoreText = this.add.text(150, 640, `Score: ${this.score}`, {
             font: `34px PirateOfTheSeaside`,
             fill: '#ffffff'
         });
@@ -81,9 +81,10 @@ class GameScene extends Phaser.Scene {
         this.createTimer();
         this.createBackground();
         this.createSoundButton();
+        this.createBoard();
         this.createMainText();
         this.createTimerText();
-        this.createScoreText()
+        this.createScoreText();
         this.start();
         this.timer.paused = true;
     }
@@ -128,6 +129,7 @@ class GameScene extends Phaser.Scene {
         });
         
     }
+
     initCards() {
         let positions = Phaser.Utils.Array.Shuffle(this.positions);
         this.cards.forEach(card => {
@@ -172,7 +174,9 @@ class GameScene extends Phaser.Scene {
     createSoundButton() {
        let button = new SoundButton(this);
     }
-    
+    createBoard() {
+        let board = new Board(this);
+    }
     onCardClicked(pointer, card) {
         if (card instanceof SoundButton) return;
         if (card.opened || !this.cardsIsTouchable) {

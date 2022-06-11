@@ -1,9 +1,10 @@
 class SoundButton extends Phaser.GameObjects.Sprite {
     constructor(scene) {
-        super(scene, 50, 50, 'volume');
+        super(scene, 130, 100, 'volume');
         this.scene = scene;
+        this.setDisplaySize(128, 128);
         this.scene.add.existing(this);
-        this.setInteractive();
+        this.setInteractive({ cursor: 'pointer' });
         this.on('pointerdown', this.onClick, this);
     }
 
