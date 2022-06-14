@@ -3,21 +3,27 @@ class GameScene extends Phaser.Scene {
         super("Game");
     }
 
+    createLevelTExt() {
+        this.levelText = this.add.text(1390, 610, `LEVEL ${this.currentLevel}`, {
+            font: `42px PirateOfTheSeaside`,
+            fill: '#ffffff'
+        }).setOrigin(0.5);
+    }
     createMainText() {
-        this.mainText = this.add.text(1390, 610, `LEVEL ${this.currentLevel}`, {
+        this.mainText = this.add.text(this.sys.game.config.width / 2, 80, ``, {
             font: `42px PirateOfTheSeaside`,
             fill: '#ffffff'
         }).setOrigin(0.5);
     }
     createTimerText() {
-        this.timeoutText = this.add.text(150, 560, `Time: ${this.timeout}`, {
+        this.timeoutText = this.add.text(140, 560, `Time: ${this.timeout}`, {
             font: `34px PirateOfTheSeaside`,
             fill: '#ffffff'
         });
     }
     createScoreText() {
         this.score = 0;
-        this.scoreText = this.add.text(150, 610, `Score: ${this.score}`, {
+        this.scoreText = this.add.text(140, 610, `Score: ${this.score}`, {
             font: `34px PirateOfTheSeaside`,
             fill: '#ffffff'
         });
@@ -84,6 +90,7 @@ class GameScene extends Phaser.Scene {
         this.createLevelBoard();
         this.createBoard();
         this.createMainText();
+        this.createLevelTExt();
         this.createTimerText();
         this.createScoreText();
         this.start();
@@ -102,7 +109,8 @@ class GameScene extends Phaser.Scene {
             ++count;
             if (count >= this.cards.length) {
                 this.timer.paused = true;
-                this.mainText.setText(`LEVEL ${this.currentLevel}`);
+                this.levelText.setText(`LEVEL ${this.currentLevel}`);
+                this.mainText.setText(``);
                 this.start();    
             }
         };
