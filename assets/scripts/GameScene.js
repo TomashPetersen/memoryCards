@@ -80,7 +80,7 @@ class GameScene extends Phaser.Scene {
     create() {
         this.isStarted = false;
         this.cardsIsTouchable = false;
-        this.currentLevel = 1;
+        this.currentLevel = 5;
         this.numberOfLevels = Object.keys(config.levels).length;
         this.level = config.levels;
         this.createSounds();

@@ -39,32 +39,39 @@ let config = {
             rows: 2,
             cols: 5,
             cards: [1, 2, 3, 4, 5],
-            timeout: 60,
+            timeout: 120,
         },
         "2": {
             rows: 2,
             cols: 5,
             cards: [1, 2, 3, 4, 5],
-            timeout: 50,
+            timeout: 90,
         },
         "3": {
             rows: 2,
             cols: 5,
             cards: [1, 2, 3, 4, 5],
-            timeout: 40,
+            timeout: 60,
         },
         "4": {
             rows: 4,
             cols: 5,
             cards: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            timeout: 60,
+            timeout: 180,
             addCards: true
         },
         "5": {
             rows: 4,
             cols: 5,
             cards: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-            timeout: 50,
+            timeout: 120,
+            addCards: true
+        },
+        "6": {
+            rows: 4,
+            cols: 5,
+            cards: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            timeout: 60,
             addCards: true
         }
     },
